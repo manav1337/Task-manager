@@ -37,11 +37,10 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    // CORS CONFIGURATION BEAN
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // Your React app
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
@@ -52,7 +51,6 @@ public class SecurityConfig {
         return source;
     }
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -61,12 +59,13 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()  // Public endpoints
-                        .anyRequest().authenticated()                 // All other endpoints require JWT
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")  // Admin only
+                        .anyRequest().authenticated()  // All other endpoints require JWT
                 );
 
         // Add JWT filter before the default authentication filter
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
+        return http.build(); // ✅ FIXED: Added closing parenthesis and semicolon
     }
 }

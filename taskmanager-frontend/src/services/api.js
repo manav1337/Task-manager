@@ -25,4 +25,22 @@ export const taskAPI = {
   deleteTask: (id) => API.delete(`/tasks/${id}`),
 };
 
+// ADD ADMIN API ENDPOINTS HERE
+export const adminAPI = {
+  // User management
+  getAllUsers: () => API.get('/admin/users'),
+  getUserById: (id) => API.get(`/admin/users/${id}`),
+  updateUser: (id, userData) => API.put(`/admin/users/${id}`, userData),
+  deleteUser: (id) => API.delete(`/admin/users/${id}`),
+  
+  // Task management (admin perspective)
+  getAllTasks: () => API.get('/admin/tasks'),
+  getTaskById: (id) => API.get(`/admin/tasks/${id}`),
+  updateTask: (id, taskData) => API.put(`/admin/tasks/${id}`, taskData),
+  deleteTask: (id) => API.delete(`/admin/tasks/${id}`),
+  
+  // Statistics
+  getDashboardStats: () => API.get('/admin/stats'),
+};
+
 export default API;

@@ -1,0 +1,332 @@
+openapi: 3.0.3
+info:
+  title: Task Management System API
+  description: >
+    A scalable REST API built with Spring Boot providing secure user and task management with JWT authentication and role-based access control.
+  version: 1.0.0
+  contact:
+    name: TaskManager Backend Team
+    email: support@taskmanager.com
+
+servers:
+  - url: http://localhost:8080/api
+    description: Local development server
+
+tags:
+  - name: Authentication
+    description: User registration and login
+  - name: Tasks
+    description: CRUD operations for tasks
+  - name: Admin
+    description: Administrative operations (users, stats, etc.)
+
+paths:
+  /auth/register:
+    post:
+      tags: [Authentication]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: john_doe
+                email:
+                  type: string
+                  example: john@example.com
+                password:
+                  type: string
+                  example: SecurePassword123
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Validation errors or duplicate user
+        '500':
+          description: Internal server error
+
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: User login and JWT token generation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzUxMiJ9...
+                  type:
+                    type: string
+                    example: Bearer
+                  id:
+                    type: integer
+                  username:
+                    type: string
+                  email:
+                    type: string
+                  role:
+                    type: string
+        '401':
+          description: Invalid credentials
+        '400':
+          description: Missing required fields
+
+  /tasks:
+    get:
+      tags: [Tasks]
+      summary: Get all tasks for logged-in user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '401':
+          description: Unauthorized
+
+    post:
+      tags: [Tasks]
+      summary: Create a new task
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskRequest'
+      responses:
+        '201':
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          description: Invalid task data
+
+  /tasks/{id}:
+    put:
+      tags: [Tasks]
+      summary: Update an existing task
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskRequest'
+      responses:
+        '200':
+          description: Task updated successfully
+        '404':
+          description: Task not found
+
+    delete:
+      tags: [Tasks]
+      summary: Delete a task
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Task deleted successfully
+        '404':
+          description: Task not found
+
+  /admin/users:
+    get:
+      tags: [Admin]
+      summary: Get all users (Admin only)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '403':
+          description: Forbidden
+
+  /admin/tasks:
+    get:
+      tags: [Admin]
+      summary: Get all tasks across users (Admin only)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of all tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminTask'
+        '403':
+          description: Forbidden
+
+  /admin/stats:
+    get:
+      tags: [Admin]
+      summary: Get dashboard statistics (Admin only)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Statistics summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalUsers:
+                    type: integer
+                  totalTasks:
+                    type: integer
+                  activeUsers:
+                    type: integer
+                  completedTasks:
+                    type: integer
+        '403':
+          description: Forbidden
+
+  /admin/users/{id}:
+    delete:
+      tags: [Admin]
+      summary: Delete a user by ID (Admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: User deleted successfully
+        '403':
+          description: Forbidden
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: john_doe
+        email:
+          type: string
+          example: john@example.com
+        role:
+          type: string
+          example: ROLE_USER
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+          example: Complete project documentation
+        description:
+          type: string
+          example: Write comprehensive API documentation
+        completed:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    TaskRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          example: New Task
+        description:
+          type: string
+          example: Task description here
+        completed:
+          type: boolean
+          example: false
+
+    AdminTask:
+      allOf:
+        - $ref: '#/components/schemas/Task'
+        - type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/User'
+

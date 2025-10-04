@@ -15,4 +15,8 @@ public interface TaskService {
     // Admin operations
     List<Task> getAllTasks();
     Task getTaskById(Long taskId);
+
+
+    long getTotalTaskCount();
+
 }

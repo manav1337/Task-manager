@@ -18,21 +18,26 @@ const Login = ({ switchToRegister }) => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
 
-    try {
-      const response = await authAPI.login(formData);
-      await login(response.data.token, response.data);
-      // Navigation will be handled by App.js based on auth state
-    } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
-    } finally {
-      setLoading(false);
-    }
-  };
+// components/Login.js - Enhanced logging
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError('');
+
+  try {
+    const response = await authAPI.login(formData);
+    console.log('🔐 FULL LOGIN RESPONSE:', response);
+    console.log('🔐 Response data:', response.data);
+    console.log('🔐 User role in response:', response.data.role);
+    
+    await login(response.data.token, response.data);
+  } catch (err) {
+    setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>

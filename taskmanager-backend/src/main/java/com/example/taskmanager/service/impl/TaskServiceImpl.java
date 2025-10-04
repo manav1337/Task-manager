@@ -132,4 +132,9 @@ public class TaskServiceImpl implements TaskService {
             throw e;
         }
     }
+
+    @Override
+    public long getTotalTaskCount() {
+        return taskRepository.count();
+    }
 }

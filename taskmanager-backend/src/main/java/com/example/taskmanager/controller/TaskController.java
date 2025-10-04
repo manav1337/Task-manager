@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import com.example.taskmanager.repository.UserRepository;
 
@@ -50,19 +51,22 @@ public class TaskController {
         }
     }
 
-    // GET ALL TASKS (ADMIN ONLY - for future use)
+    // GET ALL TASKS (ADMIN ONLY)
     @GetMapping("/all")
     public ResponseEntity<List<Task>> getAllTasks(Authentication authentication) {
         try {
-            User currentUser = (User) authentication.getPrincipal();
+            // Check if user is admin using authorities
+            boolean isAdmin = authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .anyMatch(role -> role.equals("ROLE_ADMIN"));
 
-            if (!currentUser.getRole().name().equals("ROLE_ADMIN")) {
-                log.warn("Non-admin user attempted to access all tasks: {}", currentUser.getUsername());
+            if (!isAdmin) {
+                log.warn("Non-admin user attempted to access all tasks: {}", authentication.getName());
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
             List<Task> tasks = taskService.getAllTasks();
-            log.info("Admin {} retrieved all tasks, count: {}", currentUser.getUsername(), tasks.size());
+            log.info("Admin {} retrieved all tasks, count: {}", authentication.getName(), tasks.size());
             return ResponseEntity.ok(tasks);
         } catch (Exception e) {
             log.error("Error in getAllTasks: ", e);
@@ -161,12 +165,17 @@ public class TaskController {
     public ResponseEntity<Task> getTaskById(@PathVariable Long id,
                                             Authentication authentication) {
         try {
-            User currentUser = (User) authentication.getPrincipal();
+            String username = authentication.getName();
+
+            // Get the current user from database using username
+            User currentUser = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found: " + username));
+
             Task task = taskService.getTaskById(id);
 
+            // Check if task belongs to current user
             if (!task.getUser().getId().equals(currentUser.getId())) {
-                log.warn("User {} attempted to access task {} belonging to another user",
-                        currentUser.getUsername(), id);
+                log.warn("User {} attempted to access task {} belonging to another user", username, id);
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
