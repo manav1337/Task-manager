@@ -588,7 +588,7 @@ public class SecurityConfig {
    ```properties
    # application.properties
    spring.datasource.url=jdbc:jdbc:mysql://localhost:3306/taskdb
-   spring.datasource.username=postgres
+   spring.datasource.username=MySql
    spring.datasource.password=yourpassword
    spring.jpa.hibernate.ddl-auto=update
    spring.jpa.show-sql=true
