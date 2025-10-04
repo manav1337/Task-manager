@@ -13,19 +13,19 @@ This system provides secure user management and task operations with comprehensi
 
 ## **Table of Contents**
 
-1. [Technology Stack](https://chatgpt.com/c/68dd9d2e-1598-832c-8a47-6325231154f4#technology-stack)
+1. [Technology Stack]
 
-2. [System Architecture](https://chatgpt.com/c/68dd9d2e-1598-832c-8a47-6325231154f4#system-architecture)
+2. [System Architecture]
 
-3. [Database Schema](https://chatgpt.com/c/68dd9d2e-1598-832c-8a47-6325231154f4#database-schema)
+3. [Database Schema]
 
-4. [Authentication & Security](https://chatgpt.com/c/68dd9d2e-1598-832c-8a47-6325231154f4#authentication--security)
+4. [Authentication & Security]
 
-5. [API Documentation](https://chatgpt.com/c/68dd9d2e-1598-832c-8a47-6325231154f4#api-documentation)
+5. [API Documentation]
 
-6. [Setup & Installation](https://chatgpt.com/c/68dd9d2e-1598-832c-8a47-6325231154f4#setup--installation)
+6. [Setup & Installation]
 
-7. [Deployment & Scalability](https://chatgpt.com/c/68dd9d2e-1598-832c-8a47-6325231154f4#deployment--scalability)
+7. [Deployment & Scalability]
 
 ***
 
