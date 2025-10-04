@@ -13,19 +13,19 @@ This system provides secure user management and task operations with comprehensi
 
 ## **Table of Contents**
 
-1. [Technology Stack]
+1. Technology Stack
 
-2. [System Architecture]
+2. System Architecture
 
-3. [Database Schema]
+3. Database Schema
 
-4. [Authentication & Security]
+4. Authentication & Security
 
-5. [API Documentation]
+5. API Documentation
 
-6. [Setup & Installation]
+6. Setup & Installation
 
-7. [Deployment & Scalability]
+7. Deployment & Scalability
 
 ***
 
